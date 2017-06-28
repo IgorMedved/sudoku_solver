@@ -3,6 +3,7 @@ package sudoku_controller;
 import java.util.EventObject;
 import java.util.List;
 
+import sudoku_model.SudokuBoard;
 import sudoku_model.ai.SudokuSolver;
 
 public class SolutionCompleteEvent extends EventObject {
@@ -10,10 +11,10 @@ public class SolutionCompleteEvent extends EventObject {
 	private SolutionStatus mStatus;
 
 
-	public SolutionCompleteEvent(Object source, SudokuSolver solver) {
+	public SolutionCompleteEvent(Object source, List<List<Integer>> solvedBoard, SolutionStatus status) {
 		super(source);
-		mSolutionBoard = solver.getBoard();
-		mStatus = solver.getSolutionStatus();
+		mSolutionBoard = solvedBoard;
+		mStatus = status;
 	}
 
 

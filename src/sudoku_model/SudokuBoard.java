@@ -3,6 +3,10 @@ package sudoku_model;
 import java.util.ArrayList;
 import java.util.List;
 
+import sudoku_model.ai.Box;
+import sudoku_model.ai.BoxSolution;
+import sudoku_model.ai.SolutionSet;
+
 public class SudokuBoard {
 	protected List<List<Integer>> mBoard;
 	private ReasonForError mError;
@@ -23,11 +27,16 @@ public class SudokuBoard {
 		
 	}
 	
-	public SudokuBoard(SudokuBoard copyBoard)
+	public SudokuBoard(SudokuBoard original)
 	{
 		mBoard = new ArrayList<>(9);
 		for (int i = 0; i <9; i++)
-			mBoard.add(new ArrayList<>(copyBoard.getRow(i)));
+			mBoard.add(new ArrayList<>(original.getRow(i)));
+	}
+	
+	private SudokuBoard (List<List<Integer>> original)
+	{
+		mBoard = original;
 	}
 	
 	public synchronized boolean  set (int row, int col, int value)
@@ -156,5 +165,26 @@ public class SudokuBoard {
 		return mError;
 	}
 	
+	public static SudokuBoard initializeBoardFromSolution(SolutionSet solutions)
+	{
+		List <List<Integer>> board = new ArrayList<>(9);
+		List<Integer> row =new ArrayList<>(9);
+		int currentCol = 0;
+		for (BoxSolution boxSolution: solutions.iterator())
+		{
+			//System.out.println("Box: row " + box.row + " col " + box.col);
+			if (currentCol ==9)
+			{
+				currentCol = 0;
+				if (row != null)
+					board.add(row);
+				row = new ArrayList<>(9);
+			}
+			row.add(boxSolution.isOnlySolution()? boxSolution.getSolution().get(0):0);
+			currentCol++;
+		}
+		board.add(row);
+		return new SudokuBoard(board);
+	}
 	
 }
