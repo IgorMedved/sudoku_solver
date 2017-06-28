@@ -1,63 +1,23 @@
 # sudoku_solver
 sudoku_solver for ai nanadegree implemented in java
 
-This code was written indpendently without consulting the course
-// The first strategy for solving sudoku is like this
+This current iteration of the design is the combination of my independent effort for writing a sudoku solver with the ideas taken from the AI nanodegree introductory project
 
-//if some number n that was either a part of the initial conditions
-                      
-// or was found during solution process occurs in a row r and col c 
-                        
-//  we know for sure that n cannot be present anywhere else
-                        
-//  where
-                        
-// 1) row = r, but col != c (in the same row)
+At present there are 5 different strategies for solving sudoku
+The first 2 
 
-// 2) col = c, but row!=r
+1) limitSolutionsByEliminatingKnownValues
+2) selectOnlyChoises are very similar to the ones suggested in the course, but were implemented before consulting the course
+3) all_twins similar to naked twin strategy, the idea was taken from the course, however it was extended from twins to triplets of 3 values 4 boxes of 4 values and so on
+4) selectMultipleChoice - extra strategy (see description in SudokuNewSolver)
+5) onlyRowOrColInSquare - strategy for combining square row with row constraints and square col with col constraints 
 
-// 3) row!=r || col!= c of a corresponding 3x3 square
-
-// so we eliminate n from a solution set at these positions
-
-// if during process of elimination one or more solution sets at r1 and c1
-
-// were reduced to size 1 we can repeat the process again
-
-// At the same time if solution sets are reduced to size 0, it means
-
-// that our problem is overconstrained, and no solution is possible 
-
-// without changing the initial conditions
-
-// the second strategy is more time consuming do not run it
-
-// unless there is no choice
-
-// when we exhausted the possibility of advancement using 
-
-// the first strategy we can try another strategy:
-
-// if we look at a solution set in row r, and col c that consists of more than one entry
-
-// but one of those entries x is not present in any of the solutions set in
-
-// 1) row = r, but col!=c
-
-// 2) col = c, but row!=r  
-
-// 3) row!=r && col!= c of a corresponding 3x3 square
-
-// then the solution for row r and col c must be x
-
-To be implemented
-1) naked_twin strategy as suggested in the course
-
-2) search strategy as suggested in the course
-
-3) diagonal sudoku
+To be implemented 
+1) search strategy as suggested in the course
+2) translate code to python
 
 
 ![ScreenShot](/screenshots/solver1.png)
 
 ![ScreenShot](/screenshots/solver2.png)
+![ScreenShot](/screenshots/solver3.png)
