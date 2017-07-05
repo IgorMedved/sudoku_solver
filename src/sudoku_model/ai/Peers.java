@@ -93,7 +93,7 @@ public class Peers {
 		for (int col = 0; col < 9; col++)
 			if (col<lowerBoundExclusionRegion || col>upperBoundExclusionRegion)
 				peers.add(new Box(i, col));
-		return peers;
+		return Collections.unmodifiableList(peers);
 	}
 
 	private static List<Box> initializeRemainingSquarePeers(int i, int j) {
@@ -340,15 +340,15 @@ public class Peers {
 	}
 	
 	public static Map<Box, List<Box>> getRightRowPeers() {
-		return rightRowPeers;
+		return Collections.unmodifiableMap(rightRowPeers);
 	}
 
 	public static Map<Box, List<Box>> getDownColPeers() {
-		return downColPeers;
+		return Collections.unmodifiableMap(downColPeers);
 	}
 
 	public static Map<Box, List<Box>> getRemainingSquarePeers() {
-		return remainingSquarePeers;
+		return Collections.unmodifiableMap(remainingSquarePeers);
 	}
 	
 

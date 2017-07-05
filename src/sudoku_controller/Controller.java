@@ -1,5 +1,6 @@
 package sudoku_controller;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -16,6 +17,7 @@ public class Controller implements GuiListener {
 	SudokuBoard mInputBoard;
 	Solver mSolver;
 	ExecutorService executor;
+	long startTime;
 	
 	public Controller()
 	{
@@ -33,16 +35,22 @@ public class Controller implements GuiListener {
 			mSolver = new SudokuNewSolver();
 			mInputBoard.printBoard();
 			SolutionSet solution = SolutionSet.getInitialConditionsFromBoard(mInputBoard);
-			System.out.println("\n\n\n\n\nIncoming Solution set");
-			solution.printSolutionSet();
+			//System.out.println("\n\n\n\n\nIncoming Solution set");
+			//solution.printSolutionSet();
 			executor.submit(new Runnable (){
 
 				@Override
 				public void run() {
+					Solver.counter = 0;
+					mSolver.stop();
+					startTime = System.nanoTime();
 					SolutionSet solution1 =mSolver.solve(solution);
-					System.out.println("\n\n\n\n\nsolved Solution!!!");
-					solution1.printSolutionSet();
-					onSolutionComplete(SudokuBoard.initializeBoardFromSolution(solution1));
+					//System.out.println("\n\n\n\n\nsolved Solution!!!");
+					//solution1.printSolutionSet();
+					System.out.println("Ran solve " + Solver.counter +" times");
+					
+					
+					onSolutionComplete(solution1);
 				}
 			
 			});
@@ -54,22 +62,22 @@ public class Controller implements GuiListener {
 				@Override
 				public void run() {
 					mListener.onErrorInput (new ErrorInputEvent (mInputBoard.getError(), row, col));
-					
 				}
 				
 			});
 		}
 	}
 	
-	public void onSolutionComplete(SudokuBoard outputBoard)
+	public void onSolutionComplete(SolutionSet solution)
 	{
 		//System.out.println("Solution is ready!" + mSolver.getSolutionStatus());
 		//mSolver.printBoard();
 		//mSolver.printSolutions();
-		if (mListener!= null)
+		if (mListener!= null && solution!= null)
 		{
 			//SolutionCompleteEvent ev = new SolutionCompleteEvent(this, mSolver); 
-			mListener.updateSolutionBoard(new SolutionCompleteEvent(this, outputBoard.getBoard(), mSolver.getSolutionStatus()));
+			System.out.println("The solution ran " + (System.nanoTime()- startTime));
+			mListener.updateSolutionBoard(new SolutionCompleteEvent(this, SudokuBoard.initializeBoardFromSolution(solution).getBoard(), solution.getSolutionStatus()));
 		}
 	}
 
@@ -78,9 +86,11 @@ public class Controller implements GuiListener {
 	}
 
 	@Override
-	public void onLoad() {
-		mInputBoard = new SudokuBoard();
-		onTextEntered(0,0,0);
+	public void onLoad(List<List<Integer>> board) {
+		mInputBoard = new SudokuBoard(board);
+		int value = mInputBoard.getBoard().get(0).get(0);
+		onTextEntered(0,0,value);
+		
 		
 	}
 

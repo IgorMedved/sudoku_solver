@@ -49,15 +49,11 @@ public class SudokuSquare extends JPanel implements DocumentListener {
 				temp = new JTextField();
 				temp.setMinimumSize(new Dimension (20,20));
 				temp.setPreferredSize(new Dimension(20,20));
+				
 				if (mListener!= null)
 				{
-					AbstractDocument d = (AbstractDocument) temp.getDocument();
-					d.setDocumentFilter(new TextFilter());
-					temp.getDocument().addDocumentListener(this);
-					temp.getDocument().putProperty(SudokuContract.ROW, mSquareRow*3+ i);
-					temp.getDocument().putProperty(SudokuContract.COLUMN, mSquareCol*3 +j);
-			    //temp.addActionListener(listener);
-					//temp.setName((i+squareRow*3) + ""+(j+squareCol*3));
+					setFilter (temp, i,j);
+					
 				}
 				else
 					temp.disable();
@@ -67,6 +63,37 @@ public class SudokuSquare extends JPanel implements DocumentListener {
 			mSquare.add(row);
 		}
 				
+	}
+
+	private void setFilter(JTextField temp, int i, int j) {
+		AbstractDocument d = (AbstractDocument) temp.getDocument();
+		d.setDocumentFilter(new TextFilter());
+		temp.getDocument().addDocumentListener(this);
+		temp.getDocument().putProperty(SudokuContract.ROW, mSquareRow*3+ i);
+		temp.getDocument().putProperty(SudokuContract.COLUMN, mSquareCol*3 +j);
+		
+	}
+	
+	public void resetSquare (List<List<Integer>> entries)
+	{
+		JTextField currentField;
+		for (int i= 0; i < 3; i++)
+			for (int j= 0; j<3; j++)
+			{
+				Integer value = entries.get(mSquareRow*3+i).get(mSquareCol*3+j);
+				currentField = mSquare.get(i).get(j);
+				currentField.getDocument().removeDocumentListener(this);
+				if (value!=0)
+				{
+					currentField.setText("");
+					currentField.setText(value.toString());
+				}
+				else
+				{
+					currentField.setText("");
+				}
+				setFilter(currentField, i, j);
+			}
 	}
 
 	public void updateSquare(List<List<Integer>> solutions) {

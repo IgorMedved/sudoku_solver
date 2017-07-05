@@ -34,7 +34,7 @@ public class SudokuBoard {
 			mBoard.add(new ArrayList<>(original.getRow(i)));
 	}
 	
-	private SudokuBoard (List<List<Integer>> original)
+	public SudokuBoard (List<List<Integer>> original)
 	{
 		mBoard = original;
 	}

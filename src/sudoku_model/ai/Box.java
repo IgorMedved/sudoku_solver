@@ -34,6 +34,11 @@ public class Box {
 			return false;
 		return true;
 	}
+	
+	public boolean isValid()
+	{
+		return (row>=0 && row <9 && col>=0 && col<9);
+	}
 
 	public String toString()
 	{

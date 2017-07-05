@@ -6,7 +6,9 @@ public abstract class Solver {
 	protected boolean isSolved;
 	protected boolean impossibleSolve;
 	protected boolean madeProgress;
-	
+	protected transient boolean interrupted = false;
+	public static int counter;
+	//public static String message;
 	public Solver ()
 	{
 		madeProgress = false;
@@ -15,6 +17,11 @@ public abstract class Solver {
 	}
 	
 	public abstract SolutionSet solve(SolutionSet incomingSolution);
+	
+	public void stop()
+	{
+		interrupted = true;
+	}
 	
 	public SolutionStatus getSolutionStatus()
 	{

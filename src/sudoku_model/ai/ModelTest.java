@@ -57,6 +57,23 @@ public class ModelTest {
 	}
 	
 	@Test
+	public void testInteractionPeers()
+	{
+		Box box1 = new Box(0,0);
+		Box invalidBox = new Box (9,3);
+		Box box2 = new Box(8,8);
+		Box box3 = new Box(4,4);
+		Box box4 = new Box (6,3);
+		Box box5 = new Box (3,6);
+		InteractionPeers.initializePeers();
+		InteractionPeers.printBoxPeers(box1);
+		InteractionPeers.printBoxPeers(box2);
+		InteractionPeers.printBoxPeers(box3);
+		InteractionPeers.printBoxPeers(box4);
+		InteractionPeers.printBoxPeers(box5);
+	}
+	
+	@Test
 	public void testFullSolution()
 	{
 		BoxSolution fullSolution = BoxSolution.getFullSolution();
@@ -175,5 +192,6 @@ public class ModelTest {
 		}
 			
 	}
-
+	
+	
 }

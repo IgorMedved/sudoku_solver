@@ -22,7 +22,7 @@ public class SudokuPanel extends JPanel {
 		setLayout(new GridBagLayout());
 		setBorder(BorderFactory.createLineBorder(Color.BLACK, 4));
 		GridBagConstraints gc = new GridBagConstraints();
-		mSudokuBoard = new ArrayList<>(3);
+		mSudokuBoard = new ArrayList<>(9);
 		List<SudokuSquare> row;
 		
 		SudokuSquare square;
@@ -46,12 +46,25 @@ public class SudokuPanel extends JPanel {
 		}
 	}
 
+	
+
 	public void updateSolutionBoard(List<List<Integer>> solutions) {
 		for (int i = 0; i < 3; i++)
 		{
 			for (int j= 0; j<3; j++)
 			{
 				mSudokuBoard.get(i).get(j).updateSquare (solutions);
+			}
+		}
+		
+	}
+	
+	public void updateWholeBoard(List<List<Integer>> board) {
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j= 0; j<3; j++)
+			{
+				mSudokuBoard.get(i).get(j).resetSquare (board);
 			}
 		}
 		
@@ -81,4 +94,8 @@ public class SudokuPanel extends JPanel {
 	public char getCharacter(int i, int j) {
 		return mSudokuBoard.get(i/3).get(j/3).getCharacter(i%3, j%3);
 	}
+
+
+
+	
 }

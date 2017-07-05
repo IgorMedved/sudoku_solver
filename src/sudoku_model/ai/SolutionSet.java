@@ -9,10 +9,38 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import sudoku_controller.SolutionStatus;
 import sudoku_model.SudokuBoard;
 
 public class SolutionSet{
 	private Map<Box, BoxSolution> mSolutionSet;
+	private boolean isSolved;
+	private boolean impossibleSolve;
+	private boolean madeProgress;
+
+	public boolean isSolved() {
+		return isSolved;
+	}
+
+	public void setSolved(boolean isSolved) {
+		this.isSolved = isSolved;
+	}
+
+	public boolean isImpossibleSolve() {
+		return impossibleSolve;
+	}
+
+	public void setImpossibleSolve(boolean impossibleSolve) {
+		this.impossibleSolve = impossibleSolve;
+	}
+
+	public boolean isMadeProgress() {
+		return madeProgress;
+	}
+
+	public void setMadeProgress(boolean madeProgress) {
+		this.madeProgress = madeProgress;
+	}
 
 	public SolutionSet()
 	{
@@ -99,6 +127,8 @@ public class SolutionSet{
 		return mSolutionSet == null? null: mSolutionSet.get(box1)== null? BoxSolution.copySolution(new ArrayList<>()): mSolutionSet.get(box1);
 	}
 	
+	
+	
 	public BoxSolution getSolution (int i, int j){
 		return getSolution(new Box(i,j));
 	}
@@ -123,4 +153,107 @@ public class SolutionSet{
 			mSolutionSet.get(box).printSolution();
 		}
 	}
+	
+	// a set of functions that give List of boxes containing a certain value, in a given position relative to supplied box
+	
+	// returns list of boxes in the same row left of @box, containing value
+	public List<Box> left (Box box, int value)
+	{
+		List<Box> boxesToLeftWithValue = new ArrayList<>(8);
+		List<Box> allBoxes = Peers.getRowPeers().get(box);
+		for (Box boxLeft: allBoxes)
+		{
+			if (boxLeft.col >= box.col)
+				break;
+			else if (mSolutionSet.get(boxLeft).contains(value))
+				boxesToLeftWithValue.add(boxLeft);
+		}
+		return boxesToLeftWithValue;
+	}
+	
+	public List<Box> up(Box box, int value)
+	{
+		List<Box> boxesUp = new ArrayList<>(8);
+		List<Box> allBoxes = Peers.getColPeers().get(box);
+		for (Box boxUp: allBoxes)
+		{
+			if (boxUp.row >= box.row)
+				break;
+			else if (mSolutionSet.get(boxUp).contains(value))
+				boxesUp.add(boxUp);
+		}
+		return boxesUp;
+	}
+	public List<Box> right (Box box, int value)
+	{
+		return modifiedListBox(Peers.getRightRowPeers().get(box), value);
+	}
+	
+	public List<Box> rowTotal(Box box, int value)
+	{
+		List<Box> boxesWithValueRow = new ArrayList<>(9);
+		Box b;
+		for (int col = 0; col < 9; col ++)
+		{
+			b = new Box(box.row, col);
+			if (mSolutionSet.get(b).contains(value))
+				boxesWithValueRow.add(b);
+		}
+		return boxesWithValueRow;
+	}
+	
+	public List<Box> down (Box box, int value)
+	{
+		return modifiedListBox(Peers.getDownColPeers().get(box), value);
+	}
+	
+	public List<Box> colTotal(Box box, int value)
+	{
+		List<Box> boxesWithValueCol = new ArrayList<>(9);
+		Box b;
+		for (int row = 0; row < 9; row ++)
+		{
+			b = new Box(row, box.col);
+			if (mSolutionSet.get(b).contains(value))
+				boxesWithValueCol.add(b);
+		}
+		
+		return boxesWithValueCol;
+	}
+	
+	private  List<Box> modifiedListBox (List<Box> candidates, int value)
+	{
+		List<Box> boxesWithValue = new ArrayList<>(9);
+		for (Box candidate: candidates)
+		{
+			if (mSolutionSet.get(candidate).contains(value))
+				boxesWithValue.add(candidate);
+		}
+		return boxesWithValue;
+		
+	}
+	
+	public SolutionStatus getSolutionStatus()
+	{
+		SolutionStatus status = SolutionStatus.UNSOLVED;
+		if (impossibleSolve)
+			status = SolutionStatus.OVERCONSTRAINED;
+		else if (isSolved)
+			status = SolutionStatus.SOLVED;
+		
+		return status;
+	}
+	
+	public void copyFrom (SolutionSet original)
+	{
+		mSolutionSet = new LinkedHashMap<>();
+		for (Box box: original.mSolutionSet.keySet())// there is no need to create new object for the box, because it's not modified
+			mSolutionSet.put(box, BoxSolution.copySolution(original.mSolutionSet.get(box)));
+		
+		madeProgress = original.madeProgress;
+		impossibleSolve=  original.impossibleSolve;
+		isSolved = original.isSolved;
+	}
+	
+	
 }

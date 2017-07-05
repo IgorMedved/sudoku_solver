@@ -13,6 +13,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -21,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
@@ -139,6 +141,7 @@ public class MainFrame extends JFrame implements ActionListener,SolutionListener
 				}
 				else if (e.getSource() instanceof PlainDocument )
 				{
+					System.out.println("running update");
 					PlainDocument source = (PlainDocument)e.getSource();
 					try {
 						//System.out.println("Got to here");
@@ -168,24 +171,33 @@ public class MainFrame extends JFrame implements ActionListener,SolutionListener
 			JFileChooser fc = new JFileChooser();
 			StringBuilder sb;
 			fc.setCurrentDirectory(new File("."));
+			System.out.println("Event Dispatch thread ? "+ SwingUtilities.isEventDispatchThread());
 			int retrival = fc.showOpenDialog(null); // Let user select file from the file system
 		    if (retrival == JFileChooser.APPROVE_OPTION) 
 		    {
-		    	mListener.onLoad();
-		    	reloadPanel();
+		    	
+		    	
 		    	try {
 					List<String> input = Files.readAllLines(fc.getSelectedFile().toPath());
+					List<List<Integer>> board = new ArrayList<>(9);
+					List<Integer> row;
 					for (int i = 0; i <9; i++)
+					{
+						row = new ArrayList<>(9);
+					
 						for (int j = 0; j < 9; j++)
 						{
-							mEntryPanel.update(i, j, input.get(i).charAt(j));
-							try {
-								Thread.sleep(5);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+							Character c = input.get(i).charAt(j);
+							if (c <= '9' && c>='1')
+								row.add(Integer.parseUnsignedInt(c.toString()));
+							else
+								row.add(0);
 						}
+						board.add(row);
+						
+					}
+					reloadPanel(board);
+					
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -290,13 +302,23 @@ public class MainFrame extends JFrame implements ActionListener,SolutionListener
 			//fc.showSaveDialog(this);
 		}
 		
-		private void reloadPanel()
+		private void reloadPanel(List<List<Integer>> board)
 		{
-			remove(mEntryPanel);
-			mEntryPanel = new SudokuPanel(this);
-			GridBagConstraints gc = new GridBagConstraints();
-			gc.gridx = 0;
-			gc.gridy = 0;
-			add(mEntryPanel,gc);
+			SwingUtilities.invokeLater(new Runnable(){
+				public void run()
+				{
+					for (int i = 0; i < board.size(); i++)
+					{
+						for (int j = 0; j< board.get(i).size(); j++)
+							System.out.print(board.get(i).get(j) + " ");
+						System.out.println();
+					}
+					mEntryPanel.updateWholeBoard(board);
+					
+					mListener.onLoad(board);
+				}
+			});
+			
+			
 		}
 }
